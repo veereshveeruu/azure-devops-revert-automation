@@ -20,8 +20,9 @@ jobs:
 
       - name: Install dependencies
         run: pip install requests
-
+        
       - name: Run Orchestrator
         run: python scripts/orchestrator.py
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+         WORK_ITEM_ID: ${{ github.event.inputs.work_item_id }}
+         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
