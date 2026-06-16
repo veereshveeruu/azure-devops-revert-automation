@@ -7,8 +7,10 @@ organization = "veereshambavarapu222"
 project = "Project-1"
 pat = os.getenv("AZURE_DEVOPS_PAT")   # must match GitHub secret name
 
-work_item_id = input("Enter Work Item ID: ")
-import os
+
+
+work_item_id = os.getenv("WORK_ITEM_ID")
+
 
 pat = os.getenv("AZURE_DEVOPS_PAT")
 

@@ -12,7 +12,8 @@ headers = {
 }
 
 # User Story ID comes from input
-work_item_id = input("Enter Azure DevOps Work Item ID: ")
+
+work_item_id = os.getenv("WORK_ITEM_ID")
 
 response = requests.get(
     f"https://api.github.com/repos/{OWNER}/{REPO}/pulls?state=all",
