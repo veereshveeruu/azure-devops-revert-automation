@@ -23,25 +23,42 @@ logging.basicConfig(
 
 def main():
 
+    print("=== ORCHESTRATOR STARTED ===")
+
     story_ids = os.getenv("WORK_ITEM_IDS")
+
+    print("WORK_ITEM_IDS:", story_ids)
 
     if not story_ids:
         raise Exception("WORK_ITEM_IDS is missing")
 
     story_ids = story_ids.split(",")
 
-    print("=== ORCHESTRATOR STARTED ===")
-    print("WORK_ITEM_IDS:", story_ids)
-    print("Processing:", story_id)
+    for story_id in story_ids:
 
-    try:
-        # your existing code
-        ...
-    except Exception as e:
-        print("ERROR OCCURRED:")
-        print(str(e))
-        print(traceback.format_exc())
-        raise
+        story_id = story_id.strip()
+
+        print("Processing:", story_id)
+
+        try:
+            pr_number = find_pr(story_id)
+            print(f"PR Found: {pr_number}")
+
+            commits = get_pr_commits(pr_number)
+            print(f"Commits: {commits}")
+
+            branch_name = execute_revert(story_id, commits)
+            print(f"Branch created: {branch_name}")
+
+            revert_pr_number = create_revert_pr(branch_name)
+            print(f"Revert PR: {revert_pr_number}")
+
+            update_work_item(story_id, revert_pr_number)
+            print("Work item updated successfully")
+
+        except Exception as e:
+            print(f"FAILED for story_id {story_id}: {e}")
+            raise
 
     for story_id in story_ids:
 
