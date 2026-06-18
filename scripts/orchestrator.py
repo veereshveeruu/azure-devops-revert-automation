@@ -9,6 +9,7 @@ from get_workitem import update_work_item
 from hash_validator import generate_repo_hash
 
 
+
 # Create logs directory if it doesn't exist
 os.makedirs("logs", exist_ok=True)
 
@@ -19,8 +20,6 @@ logging.basicConfig(
 )
 
 
-
-
 def main():
 
     story_ids = os.getenv("WORK_ITEM_IDS")
@@ -29,6 +28,10 @@ def main():
         raise Exception("WORK_ITEM_IDS is missing")
 
     story_ids = story_ids.split(",")
+
+    print("=== ORCHESTRATOR STARTED ===")
+    print("WORK_ITEM_IDS:", story_ids)
+    print("Processing:", story_id)
 
     for story_id in story_ids:
 
