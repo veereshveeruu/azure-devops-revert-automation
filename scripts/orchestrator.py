@@ -1,46 +1,112 @@
 import os
+import logging
 
-from find_pr import find_pr_by_story
+from find_pr import find_pr
 from get_pr_commits import get_pr_commits
 from github_revert import execute_revert
 from create_revert_pr import create_revert_pr
 from get_workitem import update_work_item
+from hash_validator import generate_repo_hash
+
+
+# Create logs directory if it doesn't exist
+os.makedirs("logs", exist_ok=True)
+
+logging.basicConfig(
+    filename="logs/revert_run.log",
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+
 
 
 def main():
 
-    # From GitHub Actions (NO input())
-    story_id = os.getenv("WORK_ITEM_ID")
+    story_ids = os.getenv("WORK_ITEM_IDS")
 
-    if not story_id:
-        raise Exception("WORK_ITEM_ID is missing")
+    if not story_ids:
+        raise Exception("WORK_ITEM_IDS is missing")
 
-    print(f"Processing Story ID: {story_id}")
+    story_ids = story_ids.split(",")
 
-    # 1. Find PR from Work Item
-    pr_number = find_pr_by_story(story_id)
+    for story_id in story_ids:
 
-    print(f"PR Found: {pr_number}")
+        try:
 
-    # 2. Get commits from PR
-    commits = get_pr_commits(pr_number)
+            story_id = story_id.strip()
 
-    print(f"Commits: {commits}")
+            print(f"\nProcessing Story ID: {story_id}")
+            logging.info(f"Story ID: {story_id}")
 
-    # 3. Revert commits + create branch
-    branch_name = execute_revert(story_id, commits)
+            # Find PR
+            pr_number = find_pr(story_id)
 
-    print(f"Branch created: {branch_name}")
+            print(f"PR Found: {pr_number}")
+            logging.info(f"PR Found: {pr_number}")
 
-    # 4. Create revert PR
-    revert_pr_number = create_revert_pr(branch_name)
+            # Get commits
+            commits = get_pr_commits(pr_number)
 
-    print(f"Revert PR: {revert_pr_number}")
+            print(f"Commits: {commits}")
+            logging.info(f"Commits Found: {commits}")
 
-    # 5. Update Azure DevOps work item
-    update_work_item(story_id, revert_pr_number)
+            # Execute revert
+            branch_name = execute_revert(story_id, commits)
 
-    print("Work item updated successfully")
+            print(f"Branch created: {branch_name}")
+            logging.info(f"Revert Branch Created: {branch_name}")
+
+            # Generate SHA256 after revert
+            after_hash = generate_repo_hash()
+
+            with open("sha256-after.txt", "w") as f:
+                f.write(after_hash)
+
+            print(f"After Hash: {after_hash}")
+            logging.info(f"After Hash: {after_hash}")
+
+            # Compare with original SHA256
+            if os.path.exists("sha256-before.txt"):
+
+                with open("sha256-before.txt", "r") as f:
+                    before_hash = f.read().strip()
+
+                print(f"Before Hash: {before_hash}")
+                logging.info(f"Before Hash: {before_hash}")
+
+                if before_hash == after_hash:
+                    print("✅ Rollback Successful - Hash Match")
+                    logging.info("Rollback Successful - Hash Match")
+                else:
+                    print("❌ Rollback Validation Failed - Hash Mismatch")
+                    logging.error("Rollback Validation Failed - Hash Mismatch")
+
+            else:
+                print("⚠ sha256-before.txt not found. Skipping validation.")
+                logging.warning(
+                    "sha256-before.txt not found. Skipping validation."
+                )
+
+            # Create revert PR
+            revert_pr_number = create_revert_pr(branch_name)
+
+            print(f"Revert PR: {revert_pr_number}")
+            logging.info(f"Revert PR Created: {revert_pr_number}")
+
+            # Update Azure DevOps work item
+            update_work_item(story_id, revert_pr_number)
+
+            print("Work item updated successfully")
+            logging.info("Azure DevOps Work Item Updated Successfully")
+
+        except Exception as e:
+
+            logging.exception(
+                f"Workflow Failed for Story ID {story_id}: {str(e)}"
+            )
+
+            raise
 
 
 if __name__ == "__main__":

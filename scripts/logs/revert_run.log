@@ -1,0 +1,48 @@
+2026-06-18 18:13:54,516 - INFO - Story ID: 12
+2026-06-18 18:13:56,624 - INFO - PR Found: None
+2026-06-18 18:13:57,440 - INFO - GitHub API Status Code: 404
+2026-06-18 18:13:57,440 - ERROR - Failed to fetch commits for PR None: {"message":"Not Found","documentation_url":"https://docs.github.com/rest/pulls/pulls#list-commits-on-a-pull-request","status":"404"}
+2026-06-18 18:13:57,441 - ERROR - Workflow Failed for Story ID 12: Failed to fetch commits for PR None
+Traceback (most recent call last):
+  File "C:\Users\veeru\Downloads\azure-devops-revert-automation\scripts\orchestrator.py", line 49, in main
+    commits = get_pr_commits(pr_number)
+  File "C:\Users\veeru\Downloads\azure-devops-revert-automation\scripts\get_pr_commits.py", line 32, in get_pr_commits
+    raise Exception(
+        f"Failed to fetch commits for PR {pr_number}"
+    )
+Exception: Failed to fetch commits for PR None
+2026-06-18 18:15:45,975 - INFO - Story ID: 12
+2026-06-18 18:15:47,965 - ERROR - Workflow Failed for Story ID 12: cannot access local variable 'search_text' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\veeru\Downloads\azure-devops-revert-automation\scripts\orchestrator.py", line 43, in main
+    pr_number = find_pr(story_id)
+  File "C:\Users\veeru\Downloads\azure-devops-revert-automation\scripts\find_pr.py", line 27, in find_pr
+    if search_text in pr["title"]:
+       ^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'search_text' where it is not associated with a value
+2026-06-18 18:17:58,354 - INFO - Story ID: 12
+2026-06-18 18:18:00,405 - INFO - PR Found: None
+2026-06-18 18:18:01,209 - INFO - GitHub API Status Code: 404
+2026-06-18 18:18:01,210 - ERROR - Failed to fetch commits for PR None: {"message":"Not Found","documentation_url":"https://docs.github.com/rest/pulls/pulls#list-commits-on-a-pull-request","status":"404"}
+2026-06-18 18:18:01,210 - ERROR - Workflow Failed for Story ID 12: Failed to fetch commits for PR None
+Traceback (most recent call last):
+  File "C:\Users\veeru\Downloads\azure-devops-revert-automation\scripts\orchestrator.py", line 49, in main
+    commits = get_pr_commits(pr_number)
+  File "C:\Users\veeru\Downloads\azure-devops-revert-automation\scripts\get_pr_commits.py", line 32, in get_pr_commits
+    raise Exception(
+        f"Failed to fetch commits for PR {pr_number}"
+    )
+Exception: Failed to fetch commits for PR None
+2026-06-18 20:52:02,425 - INFO - Story ID: 12
+2026-06-18 20:52:41,649 - INFO - PR Found: None
+2026-06-18 20:52:44,312 - INFO - GitHub API Status Code: 404
+2026-06-18 20:52:44,313 - ERROR - Failed to fetch commits for PR None: {"message":"Not Found","documentation_url":"https://docs.github.com/rest/pulls/pulls#list-commits-on-a-pull-request","status":"404"}
+2026-06-18 20:52:44,313 - ERROR - Workflow Failed for Story ID 12: Failed to fetch commits for PR None
+Traceback (most recent call last):
+  File "C:\Users\veeru\Downloads\azure-devops-revert-automation\scripts\orchestrator.py", line 49, in main
+    commits = get_pr_commits(pr_number)
+  File "C:\Users\veeru\Downloads\azure-devops-revert-automation\scripts\get_pr_commits.py", line 32, in get_pr_commits
+    raise Exception(
+        f"Failed to fetch commits for PR {pr_number}"
+    )
+Exception: Failed to fetch commits for PR None

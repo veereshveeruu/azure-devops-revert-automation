@@ -2,24 +2,44 @@ import os
 import requests
 import base64
 
-#Get Azure DevOps User Story Details
-organization = "veereshambavarapu222"
-project = "Project-1"
-pat = os.getenv("AZURE_DEVOPS_PAT")   # must match GitHub secret name
-work_item_id = os.getenv("WORK_ITEM_ID")
 
+def update_work_item(work_item_id, revert_pr_number):
 
-pat = os.getenv("AZURE_DEVOPS_PAT")
+    organization = "veereshambavarapu222"
+    project = "Project-1"
 
-credentials = base64.b64encode(f":{pat}".encode()).decode()
+    pat = os.getenv("AZURE_DEVOPS_PAT")
 
-headers = {
-    "Authorization": f"Basic {credentials}",
-    "Content-Type": "application/json"
-}
+    credentials = base64.b64encode(
+        f":{pat}".encode()
+    ).decode()
 
-url = f"https://dev.azure.com/{organization}/{project}/_apis/wit/workitems/{work_item_id}?api-version=7.1"
+    headers = {
+        "Authorization": f"Basic {credentials}",
+        "Content-Type": "application/json-patch+json"
+    }
 
-response = requests.get(url, headers=headers)
-print(response.status_code)
-print(response.json())
+    url = (
+        f"https://dev.azure.com/"
+        f"{organization}/{project}"
+        f"/_apis/wit/workitems/{work_item_id}"
+        f"?api-version=7.1"
+    )
+
+    payload = [
+        {
+            "op": "add",
+            "path": "/fields/System.History",
+            "value": f"Rollback PR Created: {revert_pr_number}"
+        }
+    ]
+
+    response = requests.patch(
+        url,
+        headers=headers,
+        json=payload
+    )
+
+    print("Update Status:", response.status_code)
+
+    return response

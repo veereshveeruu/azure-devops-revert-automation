@@ -1,9 +1,9 @@
+import logging
 import os
 import requests
 
 OWNER = "veereshveeruu"
 REPO = "azure-devops-revert-automation"
-PR_NUMBER = input("Enter PR Number: ")
 
 token = os.getenv("GITHUB_TOKEN")
 
@@ -12,23 +12,39 @@ headers = {
     "Accept": "application/vnd.github+json"
 }
 
-url = f"https://api.github.com/repos/{OWNER}/{REPO}/pulls/{PR_NUMBER}/commits"
 
-response = requests.get(url, headers=headers)
+def get_pr_commits(pr_number):
 
-print("Status Code:", response.status_code)
+    url = (
+        f"https://api.github.com/repos/"
+        f"{OWNER}/{REPO}/pulls/{pr_number}/commits"
+    )
 
-if response.status_code == 200:
+    response = requests.get(url, headers=headers)
+
+    logging.info(f"GitHub API Status Code: {response.status_code}")
+
+    if response.status_code != 200:
+        logging.error(
+            f"Failed to fetch commits for PR {pr_number}: "
+            f"{response.text}"
+        )
+        raise Exception(
+            f"Failed to fetch commits for PR {pr_number}"
+        )
+
     commits = response.json()
 
     commit_list = []
 
     for commit in commits:
+
         sha = commit["sha"]
+
         commit_list.append(sha)
-        print(sha)
 
-    print("\nCommit List:", commit_list)
+        logging.info(f"Commit Found: {sha}")
 
-else:
-    print(response.text)
+    logging.info(f"Commit List: {commit_list}")
+
+    return commit_list

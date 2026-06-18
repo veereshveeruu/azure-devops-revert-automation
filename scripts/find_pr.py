@@ -1,43 +1,26 @@
-import os
-import requests
+import logging
+from github_commit_finder import find_commits_by_work_item
+from commit_to_pr import get_pr_from_commit
+
 
 OWNER = "veereshveeruu"
 REPO = "azure-devops-revert-automation"
 
-GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
 
-headers = {
-    "Authorization": f"Bearer {GITHUB_TOKEN}",
-    "Accept": "application/vnd.github+json"
-}
+def find_pr(work_item_id):
 
-# User Story ID comes from input
+    commits = find_commits_by_work_item(work_item_id, OWNER, REPO)
 
-work_item_id = os.getenv("WORK_ITEM_ID")
+    if not commits:
+        print("No commits found for work item")
+        return None
 
-response = requests.get(
-    f"https://api.github.com/repos/{OWNER}/{REPO}/pulls?state=all",
-    headers=headers
-)
+    for sha in commits:
 
-prs = response.json()
+        pr_number = get_pr_from_commit(OWNER, REPO, sha)
 
-if response.status_code != 200:
-    print("GitHub API Error:")
-    print(prs)
-    exit()
+        if pr_number:
+            print("PR Found:", pr_number)
+            return pr_number
 
-search_text = f"AB#{work_item_id}"
-
-pr_found = False
-
-for pr in prs:
-    if search_text in pr["title"]:
-        print("PR Found")
-        print("PR Number:", pr["number"])
-        print("Title:", pr["title"])
-        pr_found = True
-        break
-
-if not pr_found:
-    print(f"No PR found for {search_text}")
+    return None
