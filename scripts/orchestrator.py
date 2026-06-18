@@ -1,5 +1,6 @@
 import os
 import logging
+import traceback
 
 from find_pr import find_pr
 from get_pr_commits import get_pr_commits
@@ -32,6 +33,15 @@ def main():
     print("=== ORCHESTRATOR STARTED ===")
     print("WORK_ITEM_IDS:", story_ids)
     print("Processing:", story_id)
+
+    try:
+        # your existing code
+        ...
+    except Exception as e:
+        print("ERROR OCCURRED:")
+        print(str(e))
+        print(traceback.format_exc())
+        raise
 
     for story_id in story_ids:
 
