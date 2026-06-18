@@ -38,105 +38,67 @@ def main():
 
         story_id = story_id.strip()
 
-        print("Processing:", story_id)
-
-        try:
-            pr_number = find_pr(story_id)
-            print(f"PR Found: {pr_number}")
-
-            commits = get_pr_commits(pr_number)
-            print(f"Commits: {commits}")
-
-            branch_name = execute_revert(story_id, commits)
-            print(f"Branch created: {branch_name}")
-
-            revert_pr_number = create_revert_pr(branch_name)
-            print(f"Revert PR: {revert_pr_number}")
-
-            update_work_item(story_id, revert_pr_number)
-            print("Work item updated successfully")
-
-        except Exception as e:
-            print(f"FAILED for story_id {story_id}: {e}")
-            raise
-
-    for story_id in story_ids:
+        print(f"\nProcessing Story ID: {story_id}")
+        logging.info(f"Story ID: {story_id}")
 
         try:
 
-            story_id = story_id.strip()
-
-            print(f"\nProcessing Story ID: {story_id}")
-            logging.info(f"Story ID: {story_id}")
-
-            # Find PR
+            # Step 1: Find PR
             pr_number = find_pr(story_id)
 
             print(f"PR Found: {pr_number}")
             logging.info(f"PR Found: {pr_number}")
 
-            # Get commits
+            if not pr_number:
+                print(f"❌ No PR found for {story_id}. Skipping.")
+                continue
+
+            # Step 2: Get commits
             commits = get_pr_commits(pr_number)
 
             print(f"Commits: {commits}")
-            logging.info(f"Commits Found: {commits}")
+            logging.info(f"Commits: {commits}")
 
-            # Execute revert
+            if not commits:
+                print(f"⚠ No commits for PR {pr_number}. Skipping.")
+                continue
+
+            # Step 3: Revert
             branch_name = execute_revert(story_id, commits)
 
             print(f"Branch created: {branch_name}")
-            logging.info(f"Revert Branch Created: {branch_name}")
+            logging.info(f"Branch created: {branch_name}")
 
-            # Generate SHA256 after revert
+            # Step 4: SHA validation
             after_hash = generate_repo_hash()
 
             with open("sha256-after.txt", "w") as f:
                 f.write(after_hash)
 
-            print(f"After Hash: {after_hash}")
-            logging.info(f"After Hash: {after_hash}")
-
-            # Compare with original SHA256
+            # Step 5: Compare
             if os.path.exists("sha256-before.txt"):
 
                 with open("sha256-before.txt", "r") as f:
                     before_hash = f.read().strip()
 
-                print(f"Before Hash: {before_hash}")
-                logging.info(f"Before Hash: {before_hash}")
-
                 if before_hash == after_hash:
-                    print("✅ Rollback Successful - Hash Match")
-                    logging.info("Rollback Successful - Hash Match")
+                    print("✅ Rollback Successful")
                 else:
-                    print("❌ Rollback Validation Failed - Hash Mismatch")
-                    logging.error("Rollback Validation Failed - Hash Mismatch")
+                    print("❌ Rollback Failed")
 
-            else:
-                print("⚠ sha256-before.txt not found. Skipping validation.")
-                logging.warning(
-                    "sha256-before.txt not found. Skipping validation."
-                )
-
-            # Create revert PR
+            # Step 6: Create PR
             revert_pr_number = create_revert_pr(branch_name)
 
             print(f"Revert PR: {revert_pr_number}")
-            logging.info(f"Revert PR Created: {revert_pr_number}")
 
-            # Update Azure DevOps work item
+            # Step 7: Update Work Item
             update_work_item(story_id, revert_pr_number)
 
             print("Work item updated successfully")
-            logging.info("Azure DevOps Work Item Updated Successfully")
 
         except Exception as e:
-
-            logging.exception(
-                f"Workflow Failed for Story ID {story_id}: {str(e)}"
-            )
-
-            raise
+            logging.exception(f"Failed for {story_id}: {str(e)}")
+            print(f"FAILED for {story_id}: {e}")
 
 
 if __name__ == "__main__":
