@@ -46,3 +46,83 @@ Traceback (most recent call last):
         f"Failed to fetch commits for PR {pr_number}"
     )
 Exception: Failed to fetch commits for PR None
+2026-06-19 10:08:52,937 - INFO - Story ID: 8
+2026-06-19 10:08:55,013 - ERROR - Failed for 8: Failed to search commits
+Traceback (most recent call last):
+  File "C:\Users\Veeru\Downloads\azure-devops-revert-automation\scripts\orchestrator.py", line 47, in main
+    pr_number = find_pr(story_id)
+  File "C:\Users\Veeru\Downloads\azure-devops-revert-automation\scripts\find_pr.py", line 12, in find_pr
+    commits = find_commits_by_work_item(work_item_id, OWNER, REPO)
+  File "C:\Users\Veeru\Downloads\azure-devops-revert-automation\scripts\github_commit_finder.py", line 21, in find_commits_by_work_item
+    raise Exception("Failed to search commits")
+Exception: Failed to search commits
+2026-06-19 10:09:17,641 - INFO - Story ID: 8
+2026-06-19 10:09:54,525 - INFO - PR Found: None
+2026-06-19 10:29:13,620 - INFO - Story ID: 8
+2026-06-19 10:29:13,623 - INFO - Searching PR for Work Item: 8
+2026-06-19 10:29:16,134 - INFO - PR Found: 1
+2026-06-19 10:29:16,136 - INFO - PR Found: 1
+2026-06-19 10:29:16,136 - INFO - \U0001f504 Fetching commits for PR: 1
+2026-06-19 10:29:16,978 - INFO - GitHub API Status Code: 200
+2026-06-19 10:29:16,978 - INFO - \U0001f4cc Commit Found: 018a3f435e684d17132b5350ae2b0a36db3721c6
+2026-06-19 10:29:16,979 - INFO - \U0001f4cc Commit Found: 2f2608835ec5d57265dd32ee3cf8b419b82a570b
+2026-06-19 10:29:16,979 - INFO - \u2705 Total Valid Commits: 2
+2026-06-19 10:29:16,980 - INFO - Commits: ['018a3f435e684d17132b5350ae2b0a36db3721c6', '2f2608835ec5d57265dd32ee3cf8b419b82a570b']
+2026-06-19 10:29:16,980 - INFO - Original Commit Order: ['018a3f435e684d17132b5350ae2b0a36db3721c6', '2f2608835ec5d57265dd32ee3cf8b419b82a570b']
+2026-06-19 10:29:16,980 - INFO - Revert Order: ['2f2608835ec5d57265dd32ee3cf8b419b82a570b', '018a3f435e684d17132b5350ae2b0a36db3721c6']
+2026-06-19 10:29:17,089 - ERROR - Failed for 8: Command '['git', 'checkout', 'main']' returned non-zero exit status 1.
+Traceback (most recent call last):
+  File "C:\Users\Veeru\Downloads\azure-devops-revert-automation\scripts\orchestrator.py", line 67, in main
+    branch_name = execute_revert(story_id, commits)
+  File "C:\Users\Veeru\Downloads\azure-devops-revert-automation\scripts\github_revert.py", line 75, in execute_revert
+    branch_name = create_revert_branch(story_id)
+  File "C:\Users\Veeru\Downloads\azure-devops-revert-automation\scripts\github_revert.py", line 29, in create_revert_branch
+    subprocess.run(
+    ~~~~~~~~~~~~~~^
+        ["git", "checkout", target_branch],
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        check=True
+        ^^^^^^^^^^
+    )
+    ^
+  File "C:\Program Files\WindowsApps\PythonSoftwareFoundation.Python.3.13_3.13.3824.0_x64__qbz5n2kfra8p0\Lib\subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['git', 'checkout', 'main']' returned non-zero exit status 1.
+2026-06-19 10:30:42,130 - INFO - Story ID: 8
+2026-06-19 10:30:42,130 - INFO - Searching PR for Work Item: 8
+2026-06-19 10:30:44,776 - INFO - PR Found: 1
+2026-06-19 10:30:44,777 - INFO - PR Found: 1
+2026-06-19 10:30:44,777 - INFO - \U0001f504 Fetching commits for PR: 1
+2026-06-19 10:30:45,670 - INFO - GitHub API Status Code: 200
+2026-06-19 10:30:45,670 - INFO - \U0001f4cc Commit Found: 018a3f435e684d17132b5350ae2b0a36db3721c6
+2026-06-19 10:30:45,670 - INFO - \U0001f4cc Commit Found: 2f2608835ec5d57265dd32ee3cf8b419b82a570b
+2026-06-19 10:30:45,670 - INFO - \u2705 Total Valid Commits: 2
+2026-06-19 10:30:45,672 - INFO - Commits: ['018a3f435e684d17132b5350ae2b0a36db3721c6', '2f2608835ec5d57265dd32ee3cf8b419b82a570b']
+2026-06-19 10:30:45,672 - INFO - Original Commit Order: ['018a3f435e684d17132b5350ae2b0a36db3721c6', '2f2608835ec5d57265dd32ee3cf8b419b82a570b']
+2026-06-19 10:30:45,672 - INFO - Revert Order: ['2f2608835ec5d57265dd32ee3cf8b419b82a570b', '018a3f435e684d17132b5350ae2b0a36db3721c6']
+2026-06-19 10:31:02,005 - INFO - Created branch revert-ab8-20260619
+2026-06-19 10:31:02,005 - INFO - Reverting Commit: 2f2608835ec5d57265dd32ee3cf8b419b82a570b
+2026-06-19 10:31:02,082 - ERROR - Git revert failed for commit 2f2608835ec5d57265dd32ee3cf8b419b82a570b
+2026-06-19 10:31:02,083 - ERROR - error: could not revert 2f26088... AB#7 Added Azure DevOps work item retrieval script
+hint: After resolving the conflicts, mark them with
+hint: "git add/rm <pathspec>", then run
+hint: "git revert --continue".
+hint: You can instead skip this commit with "git revert --skip".
+hint: To abort and get back to the state before "git revert",
+hint: run "git revert --abort".
+hint: Disable this message with "git config set advice.mergeConflict false"
+
+2026-06-19 10:31:02,209 - ERROR - Failed for 8: Merge conflict detected while reverting commit 2f2608835ec5d57265dd32ee3cf8b419b82a570b
+Traceback (most recent call last):
+  File "C:\Users\Veeru\Downloads\azure-devops-revert-automation\scripts\orchestrator.py", line 67, in main
+    branch_name = execute_revert(story_id, commits)
+  File "C:\Users\Veeru\Downloads\azure-devops-revert-automation\scripts\github_revert.py", line 103, in execute_revert
+    raise Exception(
+        f"Merge conflict detected while reverting commit {commit}"
+    )
+Exception: Merge conflict detected while reverting commit 2f2608835ec5d57265dd32ee3cf8b419b82a570b
+2026-06-19 11:31:23,583 - INFO - Story ID: 12
+2026-06-19 11:31:57,375 - INFO - PR Found: None
+2026-06-19 11:33:14,895 - INFO - Story ID: 10
+2026-06-19 11:33:46,649 - INFO - PR Found: None
